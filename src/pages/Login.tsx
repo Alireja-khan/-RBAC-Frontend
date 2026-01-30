@@ -8,6 +8,7 @@ import { AxiosError } from "axios";
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [errors, setErrors] = useState<{ email?: string; password?: string }>({});
 
   const { login } = useAuth();
   const navigate = useNavigate();
@@ -20,12 +21,33 @@ export default function Login() {
     },
   });
 
+  const validateForm = () => {
+    const newErrors: { email?: string; password?: string } = {};
+    
+    if (!email) {
+      newErrors.email = "Email is required";
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      newErrors.email = "Email is invalid";
+    }
+    
+    if (!password) {
+      newErrors.password = "Password is required";
+    } else if (password.length < 6) {
+      newErrors.password = "Password must be at least 6 characters";
+    }
+    
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
   const errorMessage =
     (mutation.error as AxiosError<{ message: string }>)?.response?.data?.message;
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    mutation.mutate({ email, password });
+    if (validateForm()) {
+      mutation.mutate({ email, password });
+    }
   };
 
   return (
@@ -39,20 +61,28 @@ export default function Login() {
         <input
           type="email"
           placeholder="Email"
-          className="w-full border p-2 mb-3"
+          className={`w-full border p-2 mb-3 ${errors.email ? 'border-red-500' : ''}`}
           value={email}
-          onChange={(e) => setEmail(e.target.value)}
+          onChange={(e) => {
+            setEmail(e.target.value);
+            if (errors.email) setErrors(prev => ({...prev, email: undefined}));
+          }}
           required
         />
+        {errors.email && <p className="text-red-500 text-sm mb-3">{errors.email}</p>}
 
         <input
           type="password"
           placeholder="Password"
-          className="w-full border p-2 mb-3"
+          className={`w-full border p-2 mb-3 ${errors.password ? 'border-red-500' : ''}`}
           value={password}
-          onChange={(e) => setPassword(e.target.value)}
+          onChange={(e) => {
+            setPassword(e.target.value);
+            if (errors.password) setErrors(prev => ({...prev, password: undefined}));
+          }}
           required
         />
+        {errors.password && <p className="text-red-500 text-sm mb-3">{errors.password}</p>}
 
         {mutation.isError && (
           <p className="text-red-500 text-sm mb-2">

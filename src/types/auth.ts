@@ -3,13 +3,20 @@ export type UserStatus = "ACTIVE" | "INACTIVE";
 
 export interface AuthUser {
   id: string;
+  name: string;
   email: string;
   role: UserRole;
   status: UserStatus;
 }
 
 export interface AuthResponse {
-  user: AuthUser;
+  user: {
+    id: string;
+    name: string;
+    email: string;
+    role: UserRole;
+    status: UserStatus;
+  };
   token: string;
 }
 
