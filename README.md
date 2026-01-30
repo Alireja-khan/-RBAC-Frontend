@@ -138,6 +138,10 @@ npm run type-check  # TypeScript type checking
 
 ## Deployment
 
+### Live Production URL
+**Application URL**: https://rbac-frontend-7u53.vercel.app
+**API Endpoint**: https://rbac-backend-11.onrender.com
+
 ### Build for Production
 ```bash
 npm run build
@@ -149,12 +153,13 @@ The production build will be output to the `dist` folder.
 Create a `.env.production` file with production environment variables:
 
 ```env
-VITE_API_URL=https://your-production-api.com
+VITE_API_URL=https://rbac-backend-11.onrender.com
 VITE_APP_NAME=RBAC Project Management
+VITE_APP_VERSION=1.0.0
 ```
 
 ### Hosting Options
-- **Vercel**: Direct deployment from GitHub
+- **Vercel** (Current): https://rbac-frontend-7u53.vercel.app
 - **Netlify**: Drag and drop the `dist` folder
 - **AWS S3**: Static website hosting
 - **Firebase Hosting**: `firebase deploy`
