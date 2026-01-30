@@ -16,7 +16,7 @@ export default function Login() {
   const mutation = useMutation({
     mutationFn: loginApi,
     onSuccess: (data) => {
-      login(data.token);
+      login(data.token, data.user);
       navigate("/dashboard");
     },
   });

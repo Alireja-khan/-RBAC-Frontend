@@ -1,4 +1,5 @@
 import axiosPublic from "../lib/axios/axiosPublic";
+import axiosPrivate from "../lib/axios/axiosPrivate";
 
 interface LoginPayload {
   email: string;
@@ -24,5 +25,10 @@ interface RegisterPayload {
 
 export const registerViaInviteApi = async (data: RegisterPayload) => {
   const res = await axiosPublic.post("/auth/register-via-invite", data);
+  return res.data;
+};
+
+export const createInviteApi = async (data: { email: string; role: "ADMIN" | "MANAGER" | "STAFF" }) => {
+  const res = await axiosPrivate.post("/auth/invite", data);
   return res.data;
 };

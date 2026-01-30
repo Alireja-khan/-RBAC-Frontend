@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { getUsers, updateUserRole, updateUserStatus } from '../api/user.api';
+import { createInviteApi } from '../api/auth.api';
 
 interface User {
   _id: string;
@@ -21,12 +22,25 @@ interface UsersResponse {
 
 const Users = () => {
   const [currentPage, setCurrentPage] = useState(1);
+  const [showInviteForm, setShowInviteForm] = useState(false);
+  const [newInvite, setNewInvite] = useState({ email: '', role: 'STAFF' as 'ADMIN' | 'MANAGER' | 'STAFF' });
+  const [inviteErrors, setInviteErrors] = useState<{ email?: string }>({});
   const queryClient = useQueryClient();
   
   // Fetch users
   const { data, isLoading, isError, error } = useQuery<UsersResponse>({
     queryKey: ['users', currentPage],
     queryFn: () => getUsers(currentPage),
+  });
+
+  // Create invite mutation
+  const createInviteMutation = useMutation({
+    mutationFn: createInviteApi,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['users'] });
+      setNewInvite({ email: '', role: 'STAFF' });
+      setShowInviteForm(false);
+    },
   });
 
   // Update user role mutation
@@ -55,6 +69,26 @@ const Users = () => {
     updateStatusMutation.mutate({ userId, status: newStatus });
   };
 
+  const validateInviteForm = () => {
+    const newErrors: { email?: string } = {};
+    
+    if (!newInvite.email) {
+      newErrors.email = 'Email is required';
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(newInvite.email)) {
+      newErrors.email = 'Email is invalid';
+    }
+    
+    setInviteErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleCreateInvite = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (validateInviteForm()) {
+      createInviteMutation.mutate(newInvite);
+    }
+  };
+
   if (isLoading) {
     return <div className="flex justify-center items-center min-h-[50vh]"><p>Loading users...</p></div>;
   }
@@ -67,7 +101,81 @@ const Users = () => {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold mb-6">User Management</h1>
+      <div className="flex justify-between items-center mb-6">
+        <h1 className="text-3xl font-bold">User Management</h1>
+        <button 
+          onClick={() => setShowInviteForm(!showInviteForm)}
+          className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition-colors"
+        >
+          {showInviteForm ? 'Cancel Invite' : 'Invite User'}
+        </button>
+      </div>
+      
+      {/* Invite Form */}
+      {showInviteForm && (
+        <div className="mb-6 bg-white p-4 rounded-lg shadow">
+          <h2 className="text-xl font-semibold mb-3">Invite New User</h2>
+          <form onSubmit={handleCreateInvite}>
+            <div className="mb-3">
+              <input
+                type="email"
+                placeholder="Email Address"
+                className={`w-full border p-2 rounded ${inviteErrors.email ? 'border-red-500' : ''}`}
+                value={newInvite.email}
+                onChange={(e) => {
+                  setNewInvite({...newInvite, email: e.target.value});
+                  if (inviteErrors.email) setInviteErrors(prev => ({...prev, email: undefined}));
+                }}
+                required
+              />
+              {inviteErrors.email && <p className="text-red-500 text-sm mt-1">{inviteErrors.email}</p>}
+            </div>
+            <div className="mb-3">
+              <select
+                value={newInvite.role}
+                onChange={(e) => setNewInvite({...newInvite, role: e.target.value as 'ADMIN' | 'MANAGER' | 'STAFF'})}
+                className="w-full border p-2 rounded"
+              >
+                <option value="ADMIN">ADMIN</option>
+                <option value="MANAGER">MANAGER</option>
+                <option value="STAFF">STAFF</option>
+              </select>
+            </div>
+            <div className="flex gap-2">
+              <button 
+                type="submit" 
+                className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 disabled:opacity-50"
+                disabled={createInviteMutation.isPending}
+              >
+                {createInviteMutation.isPending ? 'Sending...' : 'Send Invite'}
+              </button>
+              <button 
+                type="button" 
+                onClick={() => {
+                  setShowInviteForm(false);
+                  setNewInvite({ email: '', role: 'STAFF' });
+                  setInviteErrors({});
+                }}
+                className="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600"
+              >
+                Cancel
+              </button>
+            </div>
+          </form>
+          
+          {createInviteMutation.isError && (
+            <div className="mt-3 p-3 bg-red-100 text-red-700 rounded">
+              Error sending invite: {createInviteMutation.error?.message}
+            </div>
+          )}
+          
+          {createInviteMutation.isSuccess && (
+            <div className="mt-3 p-3 bg-green-100 text-green-700 rounded">
+              Invite sent successfully!
+            </div>
+          )}
+        </div>
+      )}
       
       <div className="overflow-x-auto bg-white rounded-lg shadow">
         <table className="min-w-full divide-y divide-gray-200">

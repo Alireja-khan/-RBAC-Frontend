@@ -25,7 +25,7 @@ export default function InviteRegister() {
   const mutation = useMutation({
     mutationFn: registerViaInviteApi,
     onSuccess: (data) => {
-      login(data.token);
+      login(data.token, data.user);
       navigate("/dashboard");
     },
   });

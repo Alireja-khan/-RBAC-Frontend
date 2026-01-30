@@ -1,4 +1,4 @@
-export type UserRole = "ADMIN" | "STAFF";
+export type UserRole = "ADMIN" | "MANAGER" | "STAFF";
 export type UserStatus = "ACTIVE" | "INACTIVE";
 
 export interface AuthUser {
@@ -22,6 +22,6 @@ export interface AuthResponse {
 
 export interface AuthContextType {
   user: AuthUser | null;
-  login: (token: string) => void;
+  login: (token: string, userData: AuthUser) => void;
   logout: () => void;
 }
