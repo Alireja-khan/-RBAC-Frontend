@@ -1,4 +1,3 @@
-import React from 'react';
 import { useAuth } from '../auth/useAuth';
 
 const Dashboard = () => {
@@ -9,7 +8,7 @@ const Dashboard = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 py-8 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-linear-to-br from-gray-50 to-gray-100 py-8 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="mb-8">
@@ -73,7 +72,7 @@ const Dashboard = () => {
           </div>
 
           {/* Access Level Card */}
-          <div className="bg-gradient-to-br from-emerald-500 to-teal-600 rounded-xl shadow-lg p-6 text-white">
+          <div className="bg-linear-to-br from-emerald-500 to-teal-600 rounded-xl shadow-lg p-6 text-white">
             <div className="flex items-center mb-4">
               <div className="p-2 bg-white/20 rounded-lg">
                 <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
