@@ -92,7 +92,7 @@ The application will be available at `http://localhost:5174`
 Create a `.env` file in the root directory:
 
 ```env
-VITE_API_URL=http://localhost:5000
+VITE_API_URL=https://rbac-backend-11.onrender.com
 VITE_APP_NAME=RBAC Project Management
 VITE_APP_VERSION=1.0.0
 ```
