@@ -43,6 +43,17 @@ const Users = () => {
       setNewInvite({ email: '', role: 'STAFF' });
       setShowInviteForm(false);
       setInviteErrors({});
+      // Scroll to success banner
+      setTimeout(() => {
+        const element = document.getElementById('invite-success-banner');
+        if (element) {
+          element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          element.classList.add('ring-4', 'ring-green-400');
+          setTimeout(() => {
+            element.classList.remove('ring-4', 'ring-green-400');
+          }, 2000);
+        }
+      }, 100);
     },
   });
 
@@ -178,12 +189,17 @@ const Users = () => {
             </div>
             <button 
               onClick={() => setShowInviteForm(!showInviteForm)}
-              className="inline-flex items-center px-5 py-2.5 bg-linear-to-r from-blue-600 to-blue-700 text-white font-medium rounded-lg hover:from-blue-700 hover:to-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all duration-200 shadow-md hover:shadow-lg"
+              className="inline-flex items-center px-5 py-2.5 bg-linear-to-r from-blue-600 to-blue-700 text-white font-medium rounded-lg hover:from-blue-700 hover:to-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all duration-200 shadow-md hover:shadow-lg group"
             >
-              <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-5 h-5 mr-2 group-hover:rotate-12 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
               </svg>
               {showInviteForm ? 'Cancel Invite' : 'Invite User'}
+              {!showInviteForm && (
+                <span className="ml-2 text-xs bg-yellow-400 text-yellow-900 px-2 py-0.5 rounded-full font-bold animate-pulse">
+                  + Link Generated
+                </span>
+              )}
             </button>
           </div>
         </div>
@@ -449,37 +465,75 @@ const Users = () => {
           </div>
         )}
 
-        {/* Success Message with Invite Link */}
+        {/* Success Message with Invite Link - Positioned prominently */}
         {createInviteMutation.isSuccess && !showInviteForm && (
-          <div className="mt-6 p-4 bg-green-50 border border-green-200 rounded-xl">
-            <div className="flex items-center mb-2">
-              <svg className="w-5 h-5 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
-              <span className="font-medium text-green-700">Success!</span>
+          <div 
+            id="invite-success-banner"
+            className="mb-6 p-6 bg-linear-to-r from-green-50 to-emerald-50 border-2 border-green-300 rounded-xl shadow-xl transform transition-all duration-300 hover:scale-[1.02] relative"
+          >
+            {/* Animated indicator arrow */}
+            <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
+              <div className="animate-bounce">
+                <svg className="w-8 h-8 text-green-500 drop-shadow-lg" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+                </svg>
+              </div>
+              <div className="text-xs text-green-600 font-bold text-center mt-1 animate-pulse">LINK BELOW</div>
             </div>
-            <p className="text-green-600 text-sm mb-3">
-              Invite sent successfully to {newInvite.email}
-            </p>
-            <div className="mt-3">
-              <p className="text-sm text-gray-700 mb-2">Share this link with the invited user:</p>
-              <div className="flex items-center bg-white border border-gray-200 rounded-lg p-3">
-                <input
-                  type="text"
-                  readOnly
-                  value={createInviteMutation.data?.inviteLink || `https://rbac-frontend-7u53.vercel.app/register/${createInviteMutation.data?.token}`}
-                  className="flex-1 bg-transparent text-sm text-gray-800 truncate mr-2 outline-none"
-                />
-                <button
-                  onClick={() => {
-                    const linkToCopy = createInviteMutation.data?.inviteLink || `https://rbac-frontend-7u53.vercel.app/register/${createInviteMutation.data?.token}`;
-                    navigator.clipboard.writeText(linkToCopy);
-                    alert('Link copied to clipboard!');
-                  }}
-                  className="px-3 py-1.5 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700 transition-colors"
-                >
-                  Copy Link
-                </button>
+            
+            <div className="flex items-start gap-4 pt-4">
+              <div className="shrink-0 mt-1">
+                <div className="animate-pulse">
+                  <svg className="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                </div>
+              </div>
+              <div className="flex-1">
+                <h3 className="text-xl font-bold text-green-800 mb-3 flex items-center gap-2">
+                  🎉 Invitation Sent Successfully!
+                  <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 animate-pulse">
+                    NEW
+                  </span>
+                </h3>
+                <p className="text-green-700 mb-5 text-lg">
+                  An invitation has been sent to <span className="font-bold text-green-900">{newInvite.email}</span>. 
+                  <span className="font-semibold">Share the link below</span> with them to complete registration.
+                </p>
+                
+                <div className="bg-white border border-green-300 rounded-lg p-4 shadow-sm">
+                  <div className="flex items-center justify-between gap-3">
+                    <div className="flex-1 min-w-0">
+                      <p className="text-xs text-gray-500 mb-1 font-medium">INVITATION LINK</p>
+                      <input
+                        type="text"
+                        readOnly
+                        value={createInviteMutation.data?.inviteLink || `https://rbac-frontend-7u53.vercel.app/register/${createInviteMutation.data?.token}`}
+                        className="w-full bg-gray-50 text-sm text-gray-800 px-3 py-2 rounded border border-gray-200 truncate font-mono"
+                      />
+                    </div>
+                    <button
+                      onClick={() => {
+                        const linkToCopy = createInviteMutation.data?.inviteLink || `https://rbac-frontend-7u53.vercel.app/register/${createInviteMutation.data?.token}`;
+                        navigator.clipboard.writeText(linkToCopy);
+                        alert('✅ Link copied to clipboard!');
+                      }}
+                      className="px-4 py-2 bg-green-600 text-white text-sm font-medium rounded-lg hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transition-all duration-200 flex items-center gap-2 whitespace-nowrap"
+                    >
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                      </svg>
+                      Copy Link
+                    </button>
+                  </div>
+                </div>
+                
+                <div className="mt-3 flex items-center text-xs text-green-600">
+                  <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                  This link will expire in 24 hours
+                </div>
               </div>
             </div>
           </div>
