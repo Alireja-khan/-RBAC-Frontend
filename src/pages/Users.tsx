@@ -467,12 +467,12 @@ const Users = () => {
                 <input
                   type="text"
                   readOnly
-                  value={createInviteMutation.data?.inviteLink || `${window.location.origin.replace('rbac-frontend', 'rbac-backend-11.onrender.com')}/register/${createInviteMutation.data?.token}`}
+                  value={createInviteMutation.data?.inviteLink || `https://rbac-frontend-7u53.vercel.app/register/${createInviteMutation.data?.token}`}
                   className="flex-1 bg-transparent text-sm text-gray-800 truncate mr-2 outline-none"
                 />
                 <button
                   onClick={() => {
-                    const linkToCopy = createInviteMutation.data?.inviteLink || `${window.location.origin.replace('rbac-frontend', 'rbac-backend-11.onrender.com')}/register/${createInviteMutation.data?.token}`;
+                    const linkToCopy = createInviteMutation.data?.inviteLink || `https://rbac-frontend-7u53.vercel.app/register/${createInviteMutation.data?.token}`;
                     navigator.clipboard.writeText(linkToCopy);
                     alert('Link copied to clipboard!');
                   }}
