@@ -449,18 +449,40 @@ const Users = () => {
           </div>
         )}
 
-        {/* Success Message */}
+        {/* Success Message with Invite Link */}
         {createInviteMutation.isSuccess && !showInviteForm && (
           <div className="mt-6 p-4 bg-green-50 border border-green-200 rounded-xl">
-            <div className="flex items-center">
+            <div className="flex items-center mb-2">
               <svg className="w-5 h-5 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
               <span className="font-medium text-green-700">Success!</span>
             </div>
-            <p className="text-green-600 mt-1 text-sm">
+            <p className="text-green-600 text-sm mb-3">
               Invite sent successfully to {newInvite.email}
             </p>
+            {createInviteMutation.data?.inviteLink && (
+              <div className="mt-3">
+                <p className="text-sm text-gray-700 mb-2">Share this link with the invited user:</p>
+                <div className="flex items-center bg-white border border-gray-200 rounded-lg p-3">
+                  <input
+                    type="text"
+                    readOnly
+                    value={createInviteMutation.data.inviteLink}
+                    className="flex-1 bg-transparent text-sm text-gray-800 truncate mr-2 outline-none"
+                  />
+                  <button
+                    onClick={() => {
+                      navigator.clipboard.writeText(createInviteMutation.data.inviteLink);
+                      alert('Link copied to clipboard!');
+                    }}
+                    className="px-3 py-1.5 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700 transition-colors"
+                  >
+                    Copy Link
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
         )}
       </div>
