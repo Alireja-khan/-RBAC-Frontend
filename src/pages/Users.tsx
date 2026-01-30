@@ -461,28 +461,27 @@ const Users = () => {
             <p className="text-green-600 text-sm mb-3">
               Invite sent successfully to {newInvite.email}
             </p>
-            {createInviteMutation.data?.inviteLink && (
-              <div className="mt-3">
-                <p className="text-sm text-gray-700 mb-2">Share this link with the invited user:</p>
-                <div className="flex items-center bg-white border border-gray-200 rounded-lg p-3">
-                  <input
-                    type="text"
-                    readOnly
-                    value={createInviteMutation.data.inviteLink}
-                    className="flex-1 bg-transparent text-sm text-gray-800 truncate mr-2 outline-none"
-                  />
-                  <button
-                    onClick={() => {
-                      navigator.clipboard.writeText(createInviteMutation.data.inviteLink);
-                      alert('Link copied to clipboard!');
-                    }}
-                    className="px-3 py-1.5 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700 transition-colors"
-                  >
-                    Copy Link
-                  </button>
-                </div>
+            <div className="mt-3">
+              <p className="text-sm text-gray-700 mb-2">Share this link with the invited user:</p>
+              <div className="flex items-center bg-white border border-gray-200 rounded-lg p-3">
+                <input
+                  type="text"
+                  readOnly
+                  value={createInviteMutation.data?.inviteLink || `${window.location.origin.replace('rbac-frontend', 'rbac-backend-11.onrender.com')}/register/${createInviteMutation.data?.token}`}
+                  className="flex-1 bg-transparent text-sm text-gray-800 truncate mr-2 outline-none"
+                />
+                <button
+                  onClick={() => {
+                    const linkToCopy = createInviteMutation.data?.inviteLink || `${window.location.origin.replace('rbac-frontend', 'rbac-backend-11.onrender.com')}/register/${createInviteMutation.data?.token}`;
+                    navigator.clipboard.writeText(linkToCopy);
+                    alert('Link copied to clipboard!');
+                  }}
+                  className="px-3 py-1.5 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700 transition-colors"
+                >
+                  Copy Link
+                </button>
               </div>
-            )}
+            </div>
           </div>
         )}
       </div>
